@@ -2,12 +2,14 @@ import path from 'path'
 import { buildConfig, type Endpoint } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { s3Storage } from '@payloadcms/storage-s3'
+import { getConnectionString } from '@netlify/database'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { getUploadInstructions } from 'payload/internal'
 import { en as adminLanguage } from '@payloadcms/translations/languages/en'
 import { fileURLToPath } from 'url'
 import { verifyMediaCapability } from './lib/mediaCapabilities'
+import { netlifyBlobsStorage } from './lib/netlifyBlobsStorage'
+import { migrations } from './migrations'
 import { Admins } from './collections/Admins'
 import { Media } from './collections/Media'
 import { Folders } from './collections/Folders'
@@ -23,19 +25,15 @@ if (!payloadSecret) {
   throw new Error('PAYLOAD_SECRET must be configured.')
 }
 
-const hasDatabaseUrl = Boolean(process.env.DATABASE_URL)
-const s3Bucket = process.env.S3_BUCKET
-const s3AccessKeyId = process.env.S3_ACCESS_KEY_ID
-const s3SecretAccessKey = process.env.S3_SECRET_ACCESS_KEY
-const hasS3Config = Boolean(
-  s3Bucket && s3AccessKeyId && s3SecretAccessKey,
-)
+const isNetlify = process.env.NETLIFY === 'true'
+const databaseUrl = isNetlify
+  ? process.env.NETLIFY_DB_URL
+    ? getConnectionString()
+    : undefined
+  : process.env.DATABASE_URL
 
-if (process.env.NODE_ENV === 'production' && !hasDatabaseUrl) {
-  throw new Error('DATABASE_URL must point to a persistent PostgreSQL database in production.')
-}
-if (process.env.NODE_ENV === 'production' && !hasS3Config) {
-  throw new Error('S3_BUCKET, S3_ACCESS_KEY_ID, and S3_SECRET_ACCESS_KEY are required in production.')
+if (process.env.NODE_ENV === 'production' && !databaseUrl) {
+  throw new Error('Enable Netlify Database or configure DATABASE_URL before building for production.')
 }
 
 const mediaUploadInstructionsEndpoint: Endpoint = {
@@ -67,9 +65,9 @@ const mediaUploadInstructionsEndpoint: Endpoint = {
       typeof fields.filesize !== 'number' ||
       !Number.isSafeInteger(fields.filesize) ||
       fields.filesize < 1 ||
-      fields.filesize > 25 * 1024 * 1024
+      fields.filesize > 4 * 1024 * 1024
     ) {
-      return Response.json({ errors: [{ message: 'Files must be no larger than 25 MB.' }] }, { status: 400 })
+      return Response.json({ errors: [{ message: 'Files must be no larger than 4 MB.' }] }, { status: 400 })
     }
 
     const instructions = await getUploadInstructions({
@@ -84,11 +82,12 @@ const mediaUploadInstructionsEndpoint: Endpoint = {
   },
 }
 
-const db = hasDatabaseUrl
+const db = databaseUrl
   ? postgresAdapter({
       pool: {
-        connectionString: process.env.DATABASE_URL,
+        connectionString: databaseUrl,
       },
+      prodMigrations: migrations,
     })
   : sqliteAdapter({
       client: {
@@ -117,32 +116,12 @@ export default buildConfig({
     supportedLanguages: { en: adminLanguage },
   },
   upload: {
-    requestSizeLimit: 25 * 1024 * 1024,
+    requestSizeLimit: 5 * 1024 * 1024,
   },
   db,
   collections: [Admins, Media, StoryMedia, Stories, Folders, Tags],
   endpoints: [mediaUploadInstructionsEndpoint],
-  storage: hasS3Config
-    ? [
-        s3Storage({
-          clientUploads: { access: () => true },
-          collections: {
-            media: true,
-            'story-media': true,
-          },
-          bucket: s3Bucket!,
-          config: {
-            credentials: {
-              accessKeyId: s3AccessKeyId!,
-              secretAccessKey: s3SecretAccessKey!,
-            },
-            region: process.env.S3_REGION || 'us-east-1',
-            endpoint: process.env.S3_ENDPOINT,
-            forcePathStyle: Boolean(process.env.S3_ENDPOINT),
-          },
-        }),
-      ]
-    : [],
+  storage: [netlifyBlobsStorage()],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

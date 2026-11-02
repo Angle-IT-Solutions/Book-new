@@ -174,6 +174,8 @@ export interface Media {
   alt: string;
   _h_folders?: (number | null) | Folder;
   _h_tags?: (number | Tag)[] | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   createdBy?: {
     relationTo: 'admins';
     value: number | Admin;
@@ -254,6 +256,8 @@ export interface StoryMedia {
   id: number;
   alt: string;
   deleteCapabilityHash?: string | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   createdBy?: {
     relationTo: 'admins';
     value: number | Admin;
@@ -450,6 +454,8 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   _h_folders?: T;
   _h_tags?: T;
+  prefix?: T;
+  _objectKey?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
@@ -483,6 +489,8 @@ export interface MediaSelect<T extends boolean = true> {
 export interface StoryMediaSelect<T extends boolean = true> {
   alt?: T;
   deleteCapabilityHash?: T;
+  prefix?: T;
+  _objectKey?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;

@@ -30,11 +30,7 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_SITE_URL:
       process.env.NEXT_PUBLIC_SITE_URL || process.env.URL || 'http://localhost:3000',
-    NEXT_PUBLIC_DIRECT_UPLOADS: process.env.S3_BUCKET &&
-      process.env.S3_ACCESS_KEY_ID &&
-      process.env.S3_SECRET_ACCESS_KEY
-      ? 'true'
-      : 'false',
+    NEXT_PUBLIC_DIRECT_UPLOADS: process.env.NETLIFY === 'true' ? 'true' : 'false',
   },
 }
 

@@ -71,7 +71,7 @@ export default function HomePage() {
   }
 
   const uploadFile = async (file: File, capability: string): Promise<OwnedUpload> => {
-    if (file.size > 25 * 1024 * 1024) throw new Error('Files must be no larger than 25 MB.')
+    if (file.size > 4 * 1024 * 1024) throw new Error('Files must be no larger than 4 MB.')
 
     const body = new FormData()
     body.append('_payload', JSON.stringify({ alt: story.title || file.name }))

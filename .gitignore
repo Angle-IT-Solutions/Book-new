@@ -5,6 +5,7 @@ dist/
 build/
 .cache/
 .env*
+!.env.example
 /payload.db
 /media/
 /story-media/
