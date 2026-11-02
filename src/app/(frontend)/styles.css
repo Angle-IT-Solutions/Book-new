@@ -1,0 +1,163 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-comic-regular:
+    'Comic Sans MS:Regular', 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive;
+  --font-comic-bold: 'Comic Sans MS:Bold', 'Comic Sans MS', 'Comic Sans', cursive;
+}
+
+@layer base {
+  body {
+    min-width: 320px;
+    background: #fff8ee;
+    font-family: 'Comic Sans MS:Regular', 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .nav-button {
+    height: 38.5px;
+    border: 2px solid white;
+    border-radius: 24px;
+    padding: 0 17px;
+    font-family: 'Comic Sans MS:Bold', 'Comic Sans MS', 'Comic Sans', cursive;
+    font-size: 15px;
+    line-height: 22.5px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'Comic Sans MS:Regular', 'Comic Sans MS', 'Comic Sans', cursive;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .field input {
+    height: 44.5px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-family: 'Comic Sans MS:Regular', 'Comic Sans MS', 'Comic Sans', cursive;
+    font-size: 15px;
+    line-height: 22.5px;
+    outline: none;
+  }
+
+  .file-field {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .file-control {
+    display: block;
+    height: 44.5px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+
+  .file-field:focus-within .file-control,
+  .file-field:hover .file-control {
+    border-color: #f7931e;
+    box-shadow: 0 0 0 2px rgb(247 147 30 / 15%);
+  }
+
+  .field input:focus {
+    border-color: #f7931e;
+    box-shadow: 0 0 0 2px rgb(247 147 30 / 15%);
+  }
+
+  .field input[type='file'] {
+    padding: 8px 12px;
+  }
+
+  .field input[type='file']::file-selector-button {
+    margin-right: 12px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff0dd;
+    padding: 4px 10px;
+    color: #b96000;
+  }
+
+  .action-button {
+    min-height: 42.5px;
+    border-radius: 24px;
+    padding: 0 22px;
+    font-family: 'Comic Sans MS:Bold', 'Comic Sans MS', 'Comic Sans', cursive;
+    font-size: 15px;
+    line-height: 22.5px;
+    color: white;
+  }
+
+  .action-button:hover:not(:disabled) {
+    filter: brightness(0.96);
+    transform: translateY(-1px);
+  }
+
+  .action-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .story-preview {
+    display: flex;
+    width: 100%;
+    max-width: 444px;
+    margin-inline: auto;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 16px;
+    background-color: white;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 6%);
+  }
+
+  .preview-image {
+    width: 100%;
+    aspect-ratio: 148 / 210;
+    background-color: white;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  .preview-details {
+    width: 100%;
+    border-top: 1px solid rgb(0 0 0 / 5%);
+    background: white;
+    padding: 16px;
+    text-align: center;
+  }
+}
+
+.figma-custom-code-fragment {
+  display: contents;
+}
+
+.figma-bypass-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2147483647;
+  transform: translateY(-150%);
+  border-radius: 6px;
+  background: #111827;
+  color: #fff;
+  padding: 8px 12px;
+  font:
+    600 14px/1.2 system-ui,
+    sans-serif;
+  text-decoration: none;
+}
+
+.figma-bypass-link:focus {
+  transform: translateY(0);
+}

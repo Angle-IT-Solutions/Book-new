@@ -1,0 +1,6 @@
+[build]
+command = "pnpm run build"
+
+[build.environment]
+NODE_VERSION = "24.22.1"
+PNPM_VERSION = "10.34.3"
